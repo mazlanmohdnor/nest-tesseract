@@ -19,13 +19,15 @@ const IMG_UPSCALED = path.join(
 );
 const IMG_SHARPED = path.join(process.cwd(), 'src', 'assets', 'img', 'sharp');
 
-const SCALE_FACTOR = 4;
+const SCALE_FACTOR = 5;
 
 @Injectable()
 export class AppService {
   async upscale(imgDir: string): Promise<string[]> {
     const progress = (current: number, total: number) => {
-      console.log(`Current Image: ${current} Total Images: ${total}`);
+      console.log(
+        `[UPSCALLING] Current Image: ${current} Total Images: ${total}`,
+      );
     };
 
     this.cleanAllDir();
@@ -37,7 +39,7 @@ export class AppService {
         recursive: false,
         mode: 'noise-scale',
         noise: 3,
-        scale: 4,
+        scale: SCALE_FACTOR,
         rename: '',
       },
       progress,
@@ -51,7 +53,7 @@ export class AppService {
       if (path.extname(file) !== '.xml') {
         const sharpImg = sharp(`${IMG_UPSCALED}\\${file}`);
 
-        if (type === 'blackFontWhiteBG') {
+        if (type === 'whiteFontBlackBG') {
           sharpImg.negate();
         }
 
@@ -63,10 +65,10 @@ export class AppService {
           .normalize()
           .toFile(`${IMG_SHARPED}\\${file}`);
 
-        console.log('Img Sharpen: ', `${IMG_SHARPED}\\${file}`);
+        console.log('Img Sharpen: ', `${file}`);
       }
     }
-    return new Promise((resolve) => resolve('Img Sharpen Successfully'));
+    return Promise.resolve('Img Sharpen Successfully');
   }
 
   async process(imgDir: string, folderName: string, type: ImgSharpenType) {
@@ -90,14 +92,15 @@ export class AppService {
         const NEW_PATH = `${imgDir}\\${newFilename}`;
         fs.writeFile(NEW_PATH, xml, (err) => {
           if (err) console.log(err);
-          console.log('Successfully Written XML: ', NEW_PATH);
+          console.log('XML Generated: ', NEW_PATH);
         });
       }
     }
   }
 
   private async tesseractProcess(file: string) {
-    const worker = Tesseract.createWorker({ logger: (m) => console.log(m) });
+    const worker =
+      Tesseract.createWorker(/*{ logger: (m) => console.log(m) }*/);
     await worker.load();
     await worker.loadLanguage('eng');
     await worker.initialize('eng');
@@ -133,7 +136,6 @@ export class AppService {
 
     xmlParse.annotation.source[0].database.push('unknown');
 
-    console.log('sizes', sizes);
     xmlParse.annotation.size[0].width[0] = (Number(sizes[3]) / SCALE_FACTOR)
       .toFixed()
       .toString();
@@ -147,7 +149,6 @@ export class AppService {
     xmlParse.annotation.object = recognizeResult.data.symbols
       .filter((y) => y.text !== ' ')
       .map((x: Tesseract.Symbol) => {
-        console.log('x.text', x.text);
         const object: ObjectBox = {
           name: [],
           pose: [],
