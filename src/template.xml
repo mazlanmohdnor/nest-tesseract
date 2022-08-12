@@ -1,0 +1,26 @@
+<annotation>
+	<folder>upscaled</folder>
+	<filename>xx</filename>
+	<path>xx</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>xx</width>
+		<height>xx</height>
+		<depth>xx</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>x</name>
+		<pose>x</pose>
+		<truncated>x</truncated>
+		<difficult>x</difficult>
+		<bndbox>
+			<xmin>x</xmin>
+			<ymin>x</ymin>
+			<xmax>x</xmax>
+			<ymax>x</ymax>
+		</bndbox>
+	</object>
+</annotation>
