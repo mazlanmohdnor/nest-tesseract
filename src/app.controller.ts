@@ -1,22 +1,45 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, Param } from '@nestjs/common';
+import { AppService, ImgSharpenType } from './app.service';
+import * as path from 'path';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('upscale')
-  getHello() {
-    return this.appService.upscale();
+  @Get('upscale/:folder')
+  getHello(@Param('folder') folder) {
+    return this.appService.upscale(folder);
   }
 
-  @Get('sharp')
-  sharpenImg() {
-    return this.appService.sharpenImg();
+  @Get('sharp/whiteFontBlackBG')
+  sharpenImgWhiteFontBlackBG() {
+    return this.appService.sharpenImg('whiteFontBlackBG');
   }
 
-  @Get('/')
-  process() {
-    return this.appService.process();
+  @Get('sharp/blackFontWhiteBG')
+  sharpenImgBlackFontWhiteBG() {
+    return this.appService.sharpenImg('blackFontWhiteBG');
+  }
+
+  @Get('/:folderName/:type')
+  process(
+    @Param('folderName') folderName,
+    @Param('type') type: ImgSharpenType = 'blackFontWhiteBG',
+  ) {
+    const IMG_BASE = path.join(
+      process.cwd(),
+      'src',
+      'assets',
+      'img',
+      'raw',
+      folderName,
+    );
+
+    return this.appService.process(IMG_BASE, folderName, type);
+  }
+
+  @Get('clean')
+  cleanDir() {
+    return this.appService.cleanAllDir();
   }
 }
