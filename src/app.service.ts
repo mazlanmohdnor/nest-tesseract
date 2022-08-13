@@ -19,7 +19,7 @@ const IMG_UPSCALED = path.join(
 );
 const IMG_SHARPED = path.join(process.cwd(), 'src', 'assets', 'img', 'sharp');
 
-const SCALE_FACTOR = 5;
+const SCALE_FACTOR = 4;
 
 @Injectable()
 export class AppService {
@@ -41,6 +41,7 @@ export class AppService {
         noise: 3,
         scale: SCALE_FACTOR,
         rename: '',
+        parallelFrames: 3,
       },
       progress,
     );
@@ -61,8 +62,11 @@ export class AppService {
           .sharpen({
             sigma: 10,
           })
-          .grayscale()
+          .median()
+          .gamma()
+          .linear()
           .normalize()
+          .grayscale()
           .toFile(`${IMG_SHARPED}\\${file}`);
 
         console.log('Img Sharpen: ', `${file}`);
@@ -72,6 +76,8 @@ export class AppService {
   }
 
   async process(imgDir: string, folderName: string, type: ImgSharpenType) {
+    console.time('process');
+
     const upscaleStatus = await this.upscale(imgDir);
     console.log('upscaleStatus', upscaleStatus);
     const imgSharpenStatus = await this.sharpenImg(type);
@@ -90,12 +96,11 @@ export class AppService {
         );
         const newFilename = path.parse(file).name + '.xml';
         const NEW_PATH = `${imgDir}\\${newFilename}`;
-        fs.writeFile(NEW_PATH, xml, (err) => {
-          if (err) console.log(err);
-          console.log('XML Generated: ', NEW_PATH);
-        });
+        fs.writeFileSync(NEW_PATH, xml);
+        console.log('XML Generated: ', NEW_PATH);
       }
     }
+    console.timeEnd('process');
   }
 
   private async tesseractProcess(file: string) {
