@@ -19,7 +19,7 @@ const IMG_UPSCALED = path.join(
 );
 const IMG_SHARPED = path.join(process.cwd(), 'src', 'assets', 'img', 'sharp');
 
-const SCALE_FACTOR = 4;
+const SCALE_FACTOR = 2;
 
 @Injectable()
 export class AppService {
@@ -111,8 +111,8 @@ export class AppService {
     await worker.initialize('eng');
     await worker.setParameters({
       tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-      tessedit_ocr_engine_mode: OEM.DEFAULT,
-      tessedit_pageseg_mode: PSM.SPARSE_TEXT,
+      // tessedit_ocr_engine_mode: OEM.DEFAULT,
+      // tessedit_pageseg_mode: PSM.SPARSE_TEXT,
     });
     const recognizeResult: Tesseract.RecognizeResult = await worker.recognize(
       `${IMG_SHARPED}\\${file}`,
