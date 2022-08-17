@@ -108,19 +108,16 @@ export class AppService {
   }
 
   private async tesseractProcess(file: string) {
-    const worker =
-      Tesseract.createWorker(/*{ logger: (m) => console.log(m) }*/);
-    await worker.load();
-    await worker.loadLanguage('eng');
-    await worker.initialize('eng');
-    await worker.setParameters({
-      tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-      // tessedit_ocr_engine_mode: OEM.DEFAULT,
-      // tessedit_pageseg_mode: PSM.SPARSE_TEXT,
-    });
-    const recognizeResult: Tesseract.RecognizeResult = await worker.recognize(
-      `${IMG_SHARPED}\\${file}`,
-    );
+    // const worker = Tesseract.createWorker({ logger: (m) => console.log(m) });
+    // await worker.load();
+    // await worker.loadLanguage('eng');
+    // await worker.initialize('eng');
+    // await worker.setParameters({
+    //   tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+    //   tessedit_ocr_engine_mode: OEM.DEFAULT,
+    //   tessedit_pageseg_mode: PSM.SPARSE_TEXT,
+    // });
+    const recognizeResult: Tesseract.RecognizeResult = await Tesseract.recognize(`${IMG_SHARPED}\\${file}`);
     return recognizeResult;
   }
 
