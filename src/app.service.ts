@@ -84,6 +84,7 @@ export class AppService {
     console.log('imgSharpenStatus', imgSharpenStatus);
 
     const filenames = fs.readdirSync(IMG_SHARPED);
+    const result = [];
     for (const file of filenames) {
       if (path.extname(file) !== '.xml') {
         console.log('Analyzing: ', file);
@@ -98,9 +99,12 @@ export class AppService {
         const NEW_PATH = `${imgDir}\\${newFilename}`;
         fs.writeFileSync(NEW_PATH, xml);
         console.log('XML Generated: ', NEW_PATH);
+        result.push(recognizeResult);
       }
     }
+
     console.timeEnd('process');
+    return result;
   }
 
   private async tesseractProcess(file: string) {
